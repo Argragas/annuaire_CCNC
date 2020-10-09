@@ -1,3 +1,4 @@
+import time
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -20,9 +21,9 @@ def index(driver):
     button.click()
     nb_page=driver.find_elements_by_xpath("""//*[@id="main"]/div[3]/div[4]""")[0].text
     nb_page=nb_page.split("Page 1/")[1]
-    parse_tab(1,nb_page)
+    parse_tab(1,nb_page,driver)
 
-def parse_tab(index_depart,nb_page):
+def parse_tab(index_depart,nb_page,driver):
     try:
         for i in range(index_depart,int(nb_page)):
             print('page:',i,'/',nb_page)
@@ -45,16 +46,17 @@ def parse_tab(index_depart,nb_page):
                 #print( csv_ligne)
                 with open("data.csv", "a") as fichier:
                     fichier.write(csv_ligne)
+            time.sleep(2)
             button = driver.find_elements_by_xpath("""//*[@id="main"]/div[3]/div[5]/div/a[1]""")[0]
             button.click()
             index_depart=i
     except Exception as e:
        print(e)
-       parse_tab(index_depart,nb_page)
+       parse_tab(index_depart,nb_page,driver)
 
 if __name__ == "__main__":
     try:
-        with open("data.csv", "a+") as fichier:
+        with open("data.csv", "w+") as fichier:
 	            fichier.write("morale/physique,nom,lien,crcc,cp,ville\n")
         firefox_driver = get_driver('http://annuaire.cncc.fr/index.php?page=liste')
         index(firefox_driver)
