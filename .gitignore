@@ -2,3 +2,4 @@ geckodriver.log
 Pipfile.lock
 data.csv
 data*
+clean_*
