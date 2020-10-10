@@ -27,7 +27,7 @@ class myThread (threading.Thread):
         init_parse(self.index,self.file_name,self.index_fin,self.threadID)
         raw_data = pd.read_csv(file_name)
         clean_data = raw_data.drop_duplicates()
-        clean_data.to_csv("clean_"+file_name)
+        clean_data.to_csv("clean_"+self.file_name)
 
 def get_driver(url,index):
     options = Options()
