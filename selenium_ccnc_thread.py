@@ -24,16 +24,18 @@ class myThread (threading.Thread):
         self.file_name="data_{}.csv".format(str(self.threadID))
 
     def run(self):
+        print("debut thread annuaire {} : {}".format(self.threadID,datetime.now()))
         init_parse(self.index,self.file_name,self.index_fin,self.threadID)
         # raw_data = pd.read_csv(self.file_name)
         # clean_data = raw_data.drop_duplicates()
         # clean_data.to_csv("clean_"+self.file_name)
-        print("thread {} end".format(self.threadID))
+        print("fin thread annuaire {} : {}".format(self.threadID,datetime.now()))
 
 def get_driver(url,index):
     options = Options()
     options.add_argument("--headless")
-    driver = webdriver.Firefox(firefox_options=options,executable_path=r'geckodriver.exe')
+    options.log.level = 'error'
+    driver = webdriver.Firefox(options=options,executable_path=r'geckodriver.exe')
     #driver = webdriver.Firefox(executable_path=r'geckodriver.exe')
     driver.get(url)
     #time.sleep(1)
@@ -71,6 +73,7 @@ def parse_tab(driver,index,file_name,index_fin,threadID):
             button.click()
             index=index+1
     except Exception as e:
+        print(threadID)
         print(e)
         parse_tab(driver,index,file_name,index_fin,threadID)
 
@@ -86,27 +89,33 @@ def init_parse(index,file_name,index_fin,threadID):
         firefox_driver.close()
 
 if __name__ == "__main__":
+    print("debut annuaire : {}".format(datetime.now()))
+    threads = []
     # Create new threads
-    # thread1 = myThread(threadID=1, index=1, index_fin=308)
-    # thread2 = myThread(threadID=2, index=309, index_fin=617)
-    # thread3 = myThread(threadID=3, index=618, index_fin=926)
-    # thread4 = myThread(threadID=4, index=927, index_fin=1234)
-    thread1 = myThread(threadID=1, index=1, index_fin=10)
-    thread2 = myThread(threadID=2, index=309, index_fin=319)
-    thread3 = myThread(threadID=3, index=618, index_fin=628)
-    thread4 = myThread(threadID=4, index=927, index_fin=937)
+    # thread1 = myThread(threadID=1, index=1, index_fin=20)
+    # thread2 = myThread(threadID=2, index=309, index_fin=329)
+    # thread3 = myThread(threadID=3, index=618, index_fin=638)
+    # thread4 = myThread(threadID=4, index=927, index_fin=958)
 
+    thread1 = myThread(threadID=1, index=1, index_fin=308)
+    thread2 = myThread(threadID=2, index=309, index_fin=617)
+    thread3 = myThread(threadID=3, index=618, index_fin=926)
+    thread4 = myThread(threadID=4, index=927, index_fin=1234)
 
+    threads.append(thread1)
+    threads.append(thread2)
+    threads.append(thread3)
+    threads.append(thread4)
 
-    # Start new Threads
-    thread1.start()
-    thread2.start()
-    thread3.start()
-    thread4.start()
+    # Start all threads
+    for x in threads:
+        x.start()
 
-
-    while thread1.is_alive() or thread2.is_alive() or thread3.is_alive() or thread4.is_alive():
-        pass
+    # Wait for all of them to finish
+    for x in threads:
+        x.join()
+    
     get_fiches()
 
+    print("fin annuaire : {}".format(datetime.now()))
     print( "Exiting Main Thread")
