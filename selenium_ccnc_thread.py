@@ -25,9 +25,10 @@ class myThread (threading.Thread):
 
     def run(self):
         init_parse(self.index,self.file_name,self.index_fin,self.threadID)
-        raw_data = pd.read_csv(file_name)
-        clean_data = raw_data.drop_duplicates()
-        clean_data.to_csv("clean_"+self.file_name)
+        # raw_data = pd.read_csv(self.file_name)
+        # clean_data = raw_data.drop_duplicates()
+        # clean_data.to_csv("clean_"+self.file_name)
+        print("thread {} end".format(self.threadID))
 
 def get_driver(url,index):
     options = Options()
@@ -45,7 +46,7 @@ def get_driver(url,index):
 def parse_tab(driver,index,file_name,index_fin,threadID):
     try:
         for i in range(index,index_fin+1):
-            print('page:',index,'/',index_fin)
+            #print('page:',index,'/',index_fin)
             page_text = (driver.page_source).encode('utf-8')
             soup = BeautifulSoup(page_text, features="lxml")
             tab = driver.find_elements_by_xpath("""//*[@id="main"]/div[3]/table/tbody/tr""")
@@ -56,14 +57,14 @@ def parse_tab(driver,index,file_name,index_fin,threadID):
                     picto = 'personne physique'
                 else:
                     picto='personne morale'
-                nom = row.find_elements_by_tag_name("td")[1].text
+                nom = row.find_elements_by_tag_name("td")[1].text.replace(",","")
                 lien=row.find_elements_by_tag_name("td")[1].find_elements_by_tag_name("a")[0].get_attribute("href")
                 crcc = row.find_elements_by_tag_name("td")[2].text
                 cp = row.find_elements_by_tag_name("td")[3].text
                 ville = row.find_elements_by_tag_name("td")[4].text
                 csv_ligne="{},{},{},{},{},{}\n".format(picto,nom,lien,crcc,cp,ville)
                 #print( csv_ligne)
-                with open(file_name, "a") as fichier:
+                with open(file_name, "a+") as fichier:
                     fichier.write(csv_ligne)
             #time.sleep(2)
             button = driver.find_elements_by_xpath("""//*[@id="main"]/div[3]/div[5]/div/a[1]""")[0]
@@ -86,14 +87,15 @@ def init_parse(index,file_name,index_fin,threadID):
 
 if __name__ == "__main__":
     # Create new threads
-    thread1 = myThread(threadID=1, index=1, index_fin=154)
-    thread2 = myThread(threadID=2, index=155, index_fin=308)
-    thread3 = myThread(threadID=3, index=309, index_fin=462)
-    thread4 = myThread(threadID=4, index=463, index_fin=616)
-    thread5 = myThread(threadID=5, index=617, index_fin=770)
-    thread6 = myThread(threadID=6, index=771, index_fin=924)
-    thread7 = myThread(threadID=7, index=925, index_fin=1078)
-    thread8 = myThread(threadID=8, index=1079, index_fin=1234)
+    # thread1 = myThread(threadID=1, index=1, index_fin=308)
+    # thread2 = myThread(threadID=2, index=309, index_fin=617)
+    # thread3 = myThread(threadID=3, index=618, index_fin=926)
+    # thread4 = myThread(threadID=4, index=927, index_fin=1234)
+    thread1 = myThread(threadID=1, index=1, index_fin=10)
+    thread2 = myThread(threadID=2, index=309, index_fin=319)
+    thread3 = myThread(threadID=3, index=618, index_fin=628)
+    thread4 = myThread(threadID=4, index=927, index_fin=937)
+
 
 
     # Start new Threads
@@ -101,12 +103,9 @@ if __name__ == "__main__":
     thread2.start()
     thread3.start()
     thread4.start()
-    thread5.start()
-    thread6.start()
-    thread7.start()
-    thread8.start()
 
-    while thread1.is_alive() and thread2.is_alive() and thread3.is_alive() and thread4.is_alive() and thread5.is_alive() and thread6.is_alive() and thread7.is_alive() and thread8.is_alive():
+
+    while thread1.is_alive() or thread2.is_alive() or thread3.is_alive() or thread4.is_alive():
         pass
     get_fiches()
 
