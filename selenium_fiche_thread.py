@@ -20,8 +20,9 @@ class myThread (threading.Thread):
         self.file_name="data_{}.csv".format(str(self.threadID))
 
     def run(self):
-        with open(self.file_name,'w+') as writer:
-            writer.write("morale/physique,nom,lien,crcc,cp,ville,adresse,tel,fax,mail,insciption,numero_inscription,site_web,forme_juridique,agree_par,reseau,compagnie_regionale,president,vice_president,vice_president_delegue,secretaire,tresorier,membre_bureau,autre_membre_conseil_regional,president_honoraires\n")
+        self.file_name="data_{}.csv".format(str(self.threadID))
+        # with open(self.file_name,'w+') as writer:
+        #     writer.write("morale/physique,nom,lien,crcc,cp,ville,adresse,tel,fax,mail,insciption,numero_inscription,site_web,forme_juridique,agree_par,reseau,compagnie_regionale,president,vice_president,vice_president_delegue,secretaire,tresorier,membre_bureau,autre_membre_conseil_regional,president_honoraires\n")
         init_parse(self.file_name)
 
 def get_driver(url):
@@ -35,16 +36,16 @@ def get_driver(url):
 def init_parse(file_name):
     try:
         firefox_driver = get_driver("http://www.google.fr")
-        with open("clean_"+file_name,'r') as reader:
+        with open(file_name,'r') as reader:
             lines=reader.readlines()
         lines.pop(0)
-        print('nb lignes',len(lines))
+        #print('nb lignes',len(lines))
         for line in lines:
             line_tab=line.split(",")
             is_moral= line_tab[0]
-            print("ismoral",is_moral,"lien",line_tab[2])
+            #print("ismoral",is_moral,"lien",line_tab[2])
             
-            with open(file_name,'a') as writer:
+            with open("avec_fiche_"+file_name,'a+') as writer:
                 if is_moral == "personne morale":
                     writer.write("{},{}\n".format(line.replace("\n",""),get_fiche_morale(firefox_driver,line_tab[2])))
                 else:
@@ -70,7 +71,7 @@ def get_fiche_morale(driver,url):
                 #valeur="{},{},{}".format(valeur,compagnie,get_fiche_compagnie_regionale(driver,lien))
             else:
                  valeur="{},{}".format(valeur,row.find_elements_by_tag_name("td")[0].text.replace("\n"," ").replace(","," "))
-        print(valeur)             
+        #print(valeur)             
         return valeur[1:]
             
           
@@ -95,7 +96,7 @@ def get_fiche_physique(driver,url):
                 #valeur="{},{},{}".format(valeur,compagnie,get_fiche_compagnie_regionale(driver,lien))
             else:
                     valeur="{},{}".format(valeur,row.find_elements_by_tag_name("td")[0].text.replace("\n"," ").replace(","," "))
-        print(valeur)             
+        #print(valeur)             
         return valeur[1:]   
     except Exception as e:
         print(e)
@@ -114,9 +115,18 @@ def get_fiche_compagnie_regionale(driver,url):
                 valeur="{},{}".format(valeur,get_fiche_compagnie_regionale(driver,lien))
             else:
                  valeur="{},{}".format(valeur,row.find_elements_by_tag_name("td")[0].text.replace("\n"," ").replace(","," "))
-        print(valeur)             
+        #print(valeur)             
         return valeur[1:]
 
+def fusion():
+    with open("annuaire.csv",'w+') as writer:
+        writer.write("morale/physique,nom,lien,crcc,cp,ville,adresse,tel,fax,mail,insciption,numero_inscription,site_web,forme_juridique,agree_par,reseau,compagnie_regionale,president,vice_president,vice_president_delegue,secretaire,tresorier,membre_bureau,autre_membre_conseil_regional,president_honoraires\n")
+    for i in range(2,5):
+        with open("avec_fiche_data_{}.csv".format(i),'r') as reader:
+            lines=reader.readlines()
+        with open("annuaire.csv",'a') as writer:
+            writer.write(lines)
+        
 
 def get_fiches():
     # Create new threads
@@ -124,19 +134,18 @@ def get_fiches():
     thread2 = myThread(threadID=2)
     thread3 = myThread(threadID=3)
     thread4 = myThread(threadID=4)
-    thread5 = myThread(threadID=5)
-    thread6 = myThread(threadID=6)
-    thread7 = myThread(threadID=7)
-    thread8 = myThread(threadID=8)
+
 
     # Start new Threads
     thread1.start()
     thread2.start()
     thread3.start()
     thread4.start()
-    thread5.start()
-    thread6.start()
-    thread7.start()
-    thread8.start()
 
+    while thread1.is_alive() or thread2.is_alive() or thread3.is_alive() or thread4.is_alive():
+        pass
+    fusion()
     print( "Exiting Main Thread fiche ")
+
+if __name__ == "__main__":
+    get_fiches()
