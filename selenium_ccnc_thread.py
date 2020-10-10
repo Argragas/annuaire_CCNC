@@ -86,18 +86,27 @@ def init_parse(index,file_name,index_fin,threadID):
 
 if __name__ == "__main__":
     # Create new threads
-    thread1 = myThread(threadID=1, index=1, index_fin=308)
-    thread2 = myThread(threadID=2, index=309, index_fin=617)
-    thread3 = myThread(threadID=3, index=618, index_fin=925)
-    thread4 = myThread(threadID=4, index=926, index_fin=1234)
+    thread1 = myThread(threadID=1, index=1, index_fin=154)
+    thread2 = myThread(threadID=2, index=155, index_fin=308)
+    thread3 = myThread(threadID=3, index=309, index_fin=462)
+    thread4 = myThread(threadID=4, index=463, index_fin=616)
+    thread5 = myThread(threadID=5, index=617, index_fin=770)
+    thread6 = myThread(threadID=6, index=771, index_fin=924)
+    thread7 = myThread(threadID=7, index=925, index_fin=1078)
+    thread8 = myThread(threadID=8, index=1079, index_fin=1234)
+
 
     # Start new Threads
     thread1.start()
     thread2.start()
     thread3.start()
     thread4.start()
+    thread5.start()
+    thread6.start()
+    thread7.start()
+    thread8.start()
 
-    while thread1.is_alive() and thread2.is_alive() and thread3.is_alive() and thread4.is_alive():
+    while thread1.is_alive() and thread2.is_alive() and thread3.is_alive() and thread4.is_alive() and thread5.is_alive() and thread6.is_alive() and thread7.is_alive() and thread8.is_alive():
         pass
     get_fiches()
 

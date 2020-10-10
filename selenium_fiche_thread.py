@@ -124,11 +124,19 @@ def get_fiches():
     thread2 = myThread(threadID=2)
     thread3 = myThread(threadID=3)
     thread4 = myThread(threadID=4)
+    thread5 = myThread(threadID=5)
+    thread6 = myThread(threadID=6)
+    thread7 = myThread(threadID=7)
+    thread8 = myThread(threadID=8)
 
     # Start new Threads
     thread1.start()
     thread2.start()
     thread3.start()
     thread4.start()
+    thread5.start()
+    thread6.start()
+    thread7.start()
+    thread8.start()
 
     print( "Exiting Main Thread fiche ")
