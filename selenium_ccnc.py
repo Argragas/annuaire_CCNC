@@ -25,7 +25,7 @@ def index(driver):
 
 def parse_tab(index_depart,nb_page,driver):
     try:
-        for i in range(index_depart,int(nb_page)):
+        for i in range(index_depart,int(nb_page)+1):
             print('page:',i,'/',nb_page)
             page_text = (driver.page_source).encode('utf-8')
             soup = BeautifulSoup(page_text, features="lxml")
