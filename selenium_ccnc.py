@@ -34,9 +34,9 @@ def parse_tab(index_depart,nb_page,driver):
             for row in tab:
                 moral_personn = row.find_elements_by_tag_name("td")[0].find_elements_by_tag_name("img")[0].get_attribute("src")
                 if "PP" in moral_personn:
-                    picto = 'personne morale'
+                    picto = 'personne physique'
                 else:
-                    picto='personne physique'
+                    picto='personne morale'
                 nom = row.find_elements_by_tag_name("td")[1].text
                 lien=row.find_elements_by_tag_name("td")[1].find_elements_by_tag_name("a")[0].get_attribute("href")
                 crcc = row.find_elements_by_tag_name("td")[2].text
