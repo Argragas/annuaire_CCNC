@@ -2,7 +2,6 @@
 
 import threading
 import time
-import time
 import pandas as pd
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -50,7 +49,7 @@ def parse_tab(driver,index,file_name,index_fin,threadID):
         for i in range(index,index_fin+1):
             #print('page:',index,'/',index_fin)
             page_text = (driver.page_source).encode('utf-8')
-            soup = BeautifulSoup(page_text, features="lxml")
+            #soup = BeautifulSoup(page_text, features="lxml")
             tab = driver.find_elements_by_xpath("""//*[@id="main"]/div[3]/table/tbody/tr""")
             tab.pop(0)
             for row in tab:
