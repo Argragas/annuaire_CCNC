@@ -4,12 +4,12 @@ import requests
 import time
 import re
 import os
-from h3c_thread import myThread
+from h3c_thread_morale import myThread
 
 
 def parse_html():  
     entete="nom prenom;n° inscription;CRCC;annee inscription; site internet;adresse;telephone;fax;associé;salarié;exercant"
-    req = requests.get("http://www.h3c.org/fiches/Liste%20des%20commissaires%20aux%20comptes%20(personnes%20physiques).html", timeout=None)
+    req = requests.get("http://www.h3c.org/fiches/Liste%20des%20commissaires%20aux%20comptes%20(personnes%20morales).html", timeout=None)
     req_text=req.text
     
     req_text=req_text.replace("<html>","")
@@ -29,8 +29,6 @@ def parse_html():
     #print(req_text)
     tab=req_text.split("<hr/>")
     
-    
-
     print("longueur tab",len(tab))
     chunks = decoupe(tab)
     print("nombre de tab",len(chunks))
@@ -39,6 +37,12 @@ def parse_html():
         total=total+len(c)
     print("verif total chunck",total)
     get_thread(chunks)
+
+def get_date_mise_a_jour():
+    req = requests.get("http://www.h3c.org/fiches/Liste%20des%20commissaires%20aux%20comptes%20(personnes%20morales).html", timeout=None)
+    soup = BeautifulSoup(req.text)
+    date=soup.find(id='bdroite').get_text()
+    return date
 
 def decoupe(hr_list):
     n = 4
@@ -80,12 +84,13 @@ def get_thread(chunks):
     print( "Exiting Main Thread {}".format(datetime.now()))
     
 def fusion():
-    with open("h3c.csv",'w+', encoding='utf8') as writer:
-        writer.write("nom prenom;n° inscription;CRCC;annee inscription; site internet;adresse;telephone;fax;associé;salarié;exercant\n")
+    date_mise_a_jour=get_date_mise_a_jour("http://annuaire.cncc.fr/index.php")
+    with open("h3c_morale_{}.csv".format(date_mise_a_jour),'w+', encoding='utf8') as writer:
+        writer.write("nom;forme juridique;n° inscription;mail;CRCC;annee inscription;site internet;adresse;telephone;fax\n")
     for i in range(1,5):
-        with open("clean_data_{}.csv".format(i),'r', encoding='utf8') as reader:
+        with open("clean_data_morale_{}.csv".format(i),'r', encoding='utf8') as reader:
             lines=reader.readlines()
-        with open("h3c.csv",'a', encoding='utf8') as writer:
+        with open("h3c_morale.csv",'a', encoding='utf8') as writer:
             writer.writelines(lines)
 
 
